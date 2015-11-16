@@ -7,25 +7,38 @@ import (
 	"path/filepath"
 )
 
+type Locate int
+
+const (
+	Local = Locate(iota)
+	Global
+)
+
 type Template interface {
 	Execute(wr io.Writer, data interface{}) error
 }
 
-type Inst struct {
+type Pkg struct {
 	Template Template
-	Dirs     []string
+	Locals   []string
+	Globals  []string
 }
 
-func New(t Template, dirs ...string) *Inst {
-	return &Inst{t, dirs}
+func New(t Template, dirs ...string) *Pkg {
+	return &Pkg{Template: t, Locals: dirs}
 }
 
-func (inst *Inst) InstallPath() string {
-	return FindDir(inst.Dirs, true)
+func (pkg *Pkg) InstallPath(loc Locate) string {
+	switch loc {
+	case Global:
+		return FindDir(pkg.Globals, true)
+	default:
+		return FindDir(pkg.Locals, true)
+	}
 }
 
-func (inst *Inst) Install(name string, mode os.FileMode, data interface{}) (fname string, err error) {
-	d := inst.InstallPath()
+func (pkg *Pkg) Install(name string, mode os.FileMode, data interface{}, loc Locate) (fname string, err error) {
+	d := pkg.InstallPath(loc)
 	if d == "" {
 		err = fmt.Errorf("inst: no install path")
 		return
@@ -42,7 +55,7 @@ func (inst *Inst) Install(name string, mode os.FileMode, data interface{}) (fnam
 		data = name
 	}
 
-	err = inst.Template.Execute(f, data)
+	err = pkg.Template.Execute(f, data)
 	if err != nil {
 		return
 	}

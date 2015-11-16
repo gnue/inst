@@ -7,8 +7,8 @@ import (
 )
 
 var templ = template.Must(template.New(Name).Parse(Template))
-var Pkg = inst.New(templ, InstallPath)
+var Pkg = &inst.Pkg{templ, Locals, Globals}
 
-func Install(name string) (string, error) {
-	return Pkg.Install(name, 0644, nil)
+func Install(name string, loc inst.Locate) (string, error) {
+	return Pkg.Install(name, 0644, nil, loc)
 }

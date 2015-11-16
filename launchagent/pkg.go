@@ -6,12 +6,12 @@ import (
 	"github.com/gnue/inst/plist"
 )
 
-var Pkg = inst.New(&plist.Template{}, InstallPath)
+var Pkg = &inst.Pkg{&plist.Template{}, Locals, Globals}
 
-func Install(name string, data *launchd.Service) (string, error) {
+func Install(name string, data *launchd.Service, loc inst.Locate) (string, error) {
 	if data.Label == "" {
 		data.Label = name
 	}
 
-	return Pkg.Install(name+".plist", 0644, data)
+	return Pkg.Install(name+".plist", 0644, data, loc)
 }

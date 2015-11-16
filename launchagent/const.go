@@ -1,4 +1,6 @@
 package launchagent
 
 const Name = "Launch Agent"
-const InstallPath = "$HOME/Library/LaunchAgents"
+
+var Locals = []string{"$HOME/Library/LaunchAgents"}
+var Globals = []string{"/Library/LaunchAgents"}

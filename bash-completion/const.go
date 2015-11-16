@@ -1,7 +1,9 @@
 package bash_completion
 
 const Name = "bash"
-const InstallPath = "$BASH_COMPLETION_DIR"
+
+var Locals = []string{"$BASH_COMPLETION_DIR"}
+var Globals = []string{"$BASH_COMPLETION_COMPAT_DIR"}
 
 var Template = `_{{.}}() {
 	args=("${COMP_WORDS[@]:1:$COMP_CWORD}")
