@@ -28,17 +28,17 @@ func New(t Template, dirs ...string) *Pkg {
 	return &Pkg{Template: t, Locals: dirs}
 }
 
-func (pkg *Pkg) InstallPath(loc Locate) string {
+func (pkg *Pkg) InstallPath(loc Locate, mkdir bool) string {
 	switch loc {
 	case Global:
-		return FindDir(pkg.Globals, true)
+		return FindDir(pkg.Globals, mkdir)
 	default:
-		return FindDir(pkg.Locals, true)
+		return FindDir(pkg.Locals, mkdir)
 	}
 }
 
 func (pkg *Pkg) Install(name string, mode os.FileMode, data interface{}, loc Locate) (fname string, err error) {
-	d := pkg.InstallPath(loc)
+	d := pkg.InstallPath(loc, true)
 	if d == "" {
 		err = fmt.Errorf("inst: no install path")
 		return
@@ -61,6 +61,18 @@ func (pkg *Pkg) Install(name string, mode os.FileMode, data interface{}, loc Loc
 	}
 
 	err = os.Chmod(fname, mode)
+
+	return
+}
+
+func (pkg *Pkg) Uninstall(name string, loc Locate) (fname string, err error) {
+	d := pkg.InstallPath(loc, false)
+	if d == "" {
+		return
+	}
+
+	fname = filepath.Join(d, name)
+	err = os.Remove(fname)
 
 	return
 }
