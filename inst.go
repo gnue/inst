@@ -21,29 +21,7 @@ func New(t Template, dirs ...string) *Inst {
 }
 
 func (inst *Inst) InstallPath() string {
-	mkd := ""
-
-	for _, dir := range inst.Dirs {
-		d := os.ExpandEnv(dir)
-
-		finfo, err := os.Stat(d)
-		if err == nil && finfo.IsDir() {
-			return d
-		}
-
-		if mkd == "" && os.IsNotExist(err) {
-			mkd = d
-		}
-	}
-
-	if mkd != "" {
-		err := os.MkdirAll(mkd, 0755)
-		if err == nil {
-			return mkd
-		}
-	}
-
-	return ""
+	return FindDir(inst.Dirs, true)
 }
 
 func (inst *Inst) Install(name string, mode os.FileMode, data interface{}) (fname string, err error) {
@@ -72,4 +50,30 @@ func (inst *Inst) Install(name string, mode os.FileMode, data interface{}) (fnam
 	err = os.Chmod(fname, mode)
 
 	return
+}
+
+func FindDir(dirs []string, mkdir bool) string {
+	mkd := ""
+
+	for _, dir := range dirs {
+		d := os.ExpandEnv(dir)
+
+		finfo, err := os.Stat(d)
+		if err == nil && finfo.IsDir() {
+			return d
+		}
+
+		if mkd == "" && os.IsNotExist(err) {
+			mkd = d
+		}
+	}
+
+	if mkdir && mkd != "" {
+		err := os.MkdirAll(mkd, 0755)
+		if err == nil {
+			return mkd
+		}
+	}
+
+	return ""
 }
