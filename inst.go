@@ -3,7 +3,9 @@ package inst
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 )
 
@@ -50,7 +52,24 @@ func (pkg *Pkg) Install(name string, mode os.FileMode, data interface{}, loc Loc
 		data = name
 	}
 
-	err = pkg.Create(fname, mode, data)
+	if loc == Global {
+		var tempDir string
+		tempDir, err = ioutil.TempDir("", "inst")
+		if err != nil {
+			return
+		}
+		defer os.RemoveAll(tempDir)
+		tempFile := filepath.Join(tempDir, name)
+		err = pkg.Create(tempFile, mode, data)
+		if err != nil {
+			return
+		}
+		cmd := exec.Command("sudo", "cp", tempFile, fname)
+		cmd.Stderr = os.Stderr
+		err = cmd.Run()
+	} else {
+		err = pkg.Create(fname, mode, data)
+	}
 
 	return
 }
