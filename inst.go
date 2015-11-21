@@ -45,15 +45,22 @@ func (pkg *Pkg) Install(name string, mode os.FileMode, data interface{}, loc Loc
 	}
 
 	fname = filepath.Join(d, name)
+
+	if data == nil {
+		data = name
+	}
+
+	err = pkg.Create(fname, mode, data)
+
+	return
+}
+
+func (pkg *Pkg) Create(fname string, mode os.FileMode, data interface{}) (err error) {
 	f, err := os.Create(fname)
 	if err != nil {
 		return
 	}
 	defer f.Close()
-
-	if data == nil {
-		data = name
-	}
 
 	err = pkg.Template.Execute(f, data)
 	if err != nil {
