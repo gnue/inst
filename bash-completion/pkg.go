@@ -7,7 +7,11 @@ import (
 )
 
 var templ = template.Must(template.New(Name).Parse(Template))
-var Pkg = &inst.Pkg{templ, Locals, Globals}
+var Pkg = &inst.Pkg{
+	Template: templ,
+	Locals:   Locals,
+	Globals:  Globals,
+}
 
 func Install(name string, loc inst.Locate) (string, error) {
 	return Pkg.Install(name, 0644, nil, loc)

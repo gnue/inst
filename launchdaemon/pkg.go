@@ -6,7 +6,11 @@ import (
 	"github.com/gnue/inst/plist"
 )
 
-var Pkg = &inst.Pkg{&plist.Template{}, Locals, Globals}
+var Pkg = &inst.Pkg{
+	Template: &plist.Template{},
+	Locals:   Locals,
+	Globals:  Globals,
+}
 
 func Install(name string, data *launchd.Service, loc inst.Locate) (string, error) {
 	if data.Label == "" {
