@@ -21,9 +21,11 @@ type Template interface {
 }
 
 type Pkg struct {
-	Template Template
-	Locals   []string
-	Globals  []string
+	Template        Template
+	Locals          []string
+	Globals         []string
+	InstallAction   func(fname string, loc Locate) error
+	UninstallAction func(fname string, loc Locate) error
 }
 
 func New(t Template, dirs ...string) *Pkg {
@@ -71,6 +73,14 @@ func (pkg *Pkg) Install(name string, mode os.FileMode, data interface{}, loc Loc
 		err = pkg.Create(fname, mode, data)
 	}
 
+	if err != nil {
+		return
+	}
+
+	if pkg.InstallAction != nil {
+		err = pkg.InstallAction(fname, loc)
+	}
+
 	return
 }
 
@@ -98,6 +108,14 @@ func (pkg *Pkg) Uninstall(name string, loc Locate) (fname string, err error) {
 	}
 
 	fname = filepath.Join(d, name)
+
+	if pkg.UninstallAction != nil {
+		err = pkg.UninstallAction(fname, loc)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "inst: %v\n", err)
+		}
+	}
+
 	err = os.Remove(fname)
 
 	return

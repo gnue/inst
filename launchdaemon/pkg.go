@@ -7,9 +7,11 @@ import (
 )
 
 var Pkg = &inst.Pkg{
-	Template: &plist.Template{},
-	Locals:   Locals,
-	Globals:  Globals,
+	Template:        &plist.Template{},
+	Locals:          Locals,
+	Globals:         Globals,
+	InstallAction:   launchd.InstallAction,
+	UninstallAction: launchd.UninstallAction,
 }
 
 func Install(name string, data *launchd.Service, loc inst.Locate) (string, error) {

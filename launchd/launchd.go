@@ -1,5 +1,12 @@
 package launchd
 
+import (
+	"os"
+	"os/exec"
+
+	"github.com/gnue/inst"
+)
+
 type ProcessType string
 
 const (
@@ -101,4 +108,36 @@ type Sockets struct {
 	SockPathMode        int         `plist:",omitempty"`
 	Bonjour             interface{} `plist:",omitempty"`
 	MulticastGroup      string      `plist:",omitempty"`
+}
+
+func InstallAction(fname string, loc inst.Locate) error {
+	var cmd *exec.Cmd
+
+	args := []string{"launchctl", "load", "-w", fname}
+
+	if loc == inst.Global {
+		cmd = exec.Command("sudo", args...)
+	} else {
+		cmd = exec.Command(args[0], args[1:]...)
+	}
+
+	cmd.Stderr = os.Stderr
+
+	return cmd.Run()
+}
+
+func UninstallAction(fname string, loc inst.Locate) error {
+	var cmd *exec.Cmd
+
+	args := []string{"launchctl", "unload", fname}
+
+	if loc == inst.Global {
+		cmd = exec.Command("sudo", args...)
+	} else {
+		cmd = exec.Command(args[0], args[1:]...)
+	}
+
+	cmd.Stderr = os.Stderr
+
+	return cmd.Run()
 }
