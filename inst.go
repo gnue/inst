@@ -116,7 +116,13 @@ func (pkg *Pkg) Uninstall(name string, loc Locate) (fname string, err error) {
 		}
 	}
 
-	err = os.Remove(fname)
+	if loc == Global {
+		cmd := exec.Command("sudo", "rm", fname)
+		cmd.Stderr = os.Stderr
+		err = cmd.Run()
+	} else {
+		err = os.Remove(fname)
+	}
 
 	return
 }
