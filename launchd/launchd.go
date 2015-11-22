@@ -1,8 +1,9 @@
 package launchd
 
 import (
-	"os"
+	"fmt"
 	"os/exec"
+	"strings"
 
 	"github.com/gnue/inst"
 )
@@ -111,33 +112,39 @@ type Sockets struct {
 }
 
 func InstallAction(fname string, loc inst.Locate) error {
-	var cmd *exec.Cmd
-
-	args := []string{"launchctl", "load", "-w", fname}
-
+	var d do
 	if loc == inst.Global {
-		cmd = exec.Command("sudo", args...)
-	} else {
-		cmd = exec.Command(args[0], args[1:]...)
+		d = do("sudo")
 	}
 
-	cmd.Stderr = os.Stderr
-
-	return cmd.Run()
+	return d.launchctl("load", "-w", fname)
 }
 
 func UninstallAction(fname string, loc inst.Locate) error {
-	var cmd *exec.Cmd
-
-	args := []string{"launchctl", "unload", fname}
-
+	var d do
 	if loc == inst.Global {
-		cmd = exec.Command("sudo", args...)
-	} else {
-		cmd = exec.Command(args[0], args[1:]...)
+		d = do("sudo")
 	}
 
-	cmd.Stderr = os.Stderr
+	return d.launchctl("unload", fname)
+}
 
-	return cmd.Run()
+type do string
+
+func (d do) launchctl(args ...string) error {
+	var cmd *exec.Cmd
+
+	if d == do("sudo") {
+		args = append([]string{"launchctl"}, args...)
+		cmd = exec.Command("sudo", args...)
+	} else {
+		cmd = exec.Command("launchctl", args...)
+	}
+
+	b, err := cmd.CombinedOutput()
+	if err == nil && 0 < len(b) {
+		err = fmt.Errorf("launchctl: %v", strings.Trim(string(b), "\n\r"))
+	}
+
+	return err
 }
