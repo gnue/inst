@@ -21,3 +21,7 @@ func Install(name string, data *launchd.Service, loc inst.Locate) (string, error
 
 	return Pkg.Install(name+".plist", 0644, data, loc)
 }
+
+func Uninstall(name string, loc inst.Locate) (string, error) {
+	return Pkg.Uninstall(name+".plist", loc)
+}

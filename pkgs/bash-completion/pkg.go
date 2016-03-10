@@ -16,3 +16,7 @@ var Pkg = &inst.Pkg{
 func Install(name string, loc inst.Locate) (string, error) {
 	return Pkg.Install(name, 0644, nil, loc)
 }
+
+func Uninstall(name string, loc inst.Locate) (string, error) {
+	return Pkg.Uninstall(name, loc)
+}
