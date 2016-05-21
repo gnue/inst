@@ -1,12 +1,15 @@
 package inst
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/gnue/merr"
 )
@@ -68,9 +71,7 @@ func (pkg *Pkg) Install(name string, mode os.FileMode, data interface{}, loc Loc
 		if err != nil {
 			return
 		}
-		cmd := exec.Command("sudo", "cp", tempFile, fname)
-		cmd.Stderr = os.Stderr
-		err = cmd.Run()
+		err = sudo("cp", tempFile, fname)
 	} else {
 		err = pkg.Create(fname, mode, data)
 	}
@@ -120,9 +121,7 @@ func (pkg *Pkg) Uninstall(name string, loc Locate) (fname string, err error) {
 	}
 
 	if loc == Global {
-		cmd := exec.Command("sudo", "rm", fname)
-		cmd.Stderr = os.Stderr
-		err = cmd.Run()
+		err = sudo("rm", fname)
 	} else {
 		err = os.Remove(fname)
 	}
@@ -159,4 +158,17 @@ func FindDir(dirs []string, mkdir bool) string {
 	}
 
 	return ""
+}
+
+func sudo(arg ...string) error {
+	var buf bytes.Buffer
+
+	cmd := exec.Command("sudo", arg...)
+	cmd.Stderr = &buf
+	err := cmd.Run()
+	if err != nil {
+		err = errors.New(strings.Trim(buf.String(), "\r\n"))
+	}
+
+	return err
 }
