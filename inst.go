@@ -7,6 +7,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/gnue/merr"
 )
 
 type Locate int
@@ -108,11 +110,12 @@ func (pkg *Pkg) Uninstall(name string, loc Locate) (fname string, err error) {
 	}
 
 	fname = filepath.Join(d, name)
+	var errs []error
 
 	if pkg.UninstallAction != nil {
-		err = pkg.UninstallAction(fname, loc)
+		err := pkg.UninstallAction(fname, loc)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "inst: %v\n", err)
+			errs = append(errs, err)
 		}
 	}
 
@@ -123,6 +126,11 @@ func (pkg *Pkg) Uninstall(name string, loc Locate) (fname string, err error) {
 	} else {
 		err = os.Remove(fname)
 	}
+
+	if err != nil {
+		errs = append(errs, err)
+	}
+	err = merr.New(errs...)
 
 	return
 }
