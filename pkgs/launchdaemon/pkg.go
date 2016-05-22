@@ -14,12 +14,12 @@ var Pkg = &inst.Pkg{
 	UninstallAction: launchd.UninstallAction,
 }
 
-func Install(name string, data *launchd.Service, loc inst.Locate) (string, error) {
+func Install(name string, data *launchd.Service, loc inst.Locate, force bool) (string, error) {
 	if data.Label == "" {
 		data.Label = name
 	}
 
-	return Pkg.Install(name+".plist", 0644, data, loc)
+	return Pkg.Install(name+".plist", 0644, data, loc, force)
 }
 
 func Uninstall(name string, loc inst.Locate) (string, error) {

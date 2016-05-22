@@ -13,8 +13,8 @@ var Pkg = &inst.Pkg{
 	Globals:  Globals,
 }
 
-func Install(name string, loc inst.Locate) (string, error) {
-	return Pkg.Install(name, 0644, nil, loc)
+func Install(name string, loc inst.Locate, force bool) (string, error) {
+	return Pkg.Install(name, 0644, nil, loc, force)
 }
 
 func Uninstall(name string, loc inst.Locate) (string, error) {

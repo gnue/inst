@@ -46,7 +46,7 @@ func (pkg *Pkg) InstallPath(loc Locate, mkdir bool) string {
 	}
 }
 
-func (pkg *Pkg) Install(name string, mode os.FileMode, data interface{}, loc Locate) (fname string, err error) {
+func (pkg *Pkg) Install(name string, mode os.FileMode, data interface{}, loc Locate, force bool) (fname string, err error) {
 	d := pkg.InstallPath(loc, true)
 	if d == "" {
 		err = fmt.Errorf("inst: no install path")
@@ -55,8 +55,10 @@ func (pkg *Pkg) Install(name string, mode os.FileMode, data interface{}, loc Loc
 
 	fname = filepath.Join(d, name)
 
-	if _, err := os.Lstat(fname); !os.IsNotExist(err) {
-		return fname, os.ErrExist
+	if !force {
+		if _, err := os.Lstat(fname); !os.IsNotExist(err) {
+			return fname, os.ErrExist
+		}
 	}
 
 	if data == nil {
