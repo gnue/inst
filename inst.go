@@ -55,6 +55,10 @@ func (pkg *Pkg) Install(name string, mode os.FileMode, data interface{}, loc Loc
 
 	fname = filepath.Join(d, name)
 
+	if _, err := os.Lstat(fname); !os.IsNotExist(err) {
+		return fname, os.ErrExist
+	}
+
 	if data == nil {
 		data = name
 	}
