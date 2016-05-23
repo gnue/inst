@@ -65,6 +65,8 @@ func (pkg *Pkg) Install(name string, mode os.FileMode, data interface{}, loc Loc
 		data = name
 	}
 
+	parent := filepath.Dir(fname)
+
 	if loc == Global {
 		var tempDir string
 		tempDir, err = ioutil.TempDir("", "inst")
@@ -77,8 +79,10 @@ func (pkg *Pkg) Install(name string, mode os.FileMode, data interface{}, loc Loc
 		if err != nil {
 			return
 		}
+		sudo("mkdir", "-p", parent)
 		err = sudo("cp", tempFile, fname)
 	} else {
+		os.MkdirAll(parent, 0755)
 		err = pkg.Create(fname, mode, data)
 	}
 
