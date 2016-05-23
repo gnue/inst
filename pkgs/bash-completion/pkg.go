@@ -6,7 +6,7 @@ import (
 	"github.com/gnue/inst"
 )
 
-var templ = template.Must(template.New(Name).Parse(Template))
+var templ = template.Must(template.New("bash").Parse(Template))
 var Pkg = &inst.Pkg{
 	Template: templ,
 	Locals:   Locals,

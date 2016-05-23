@@ -1,7 +1,5 @@
 package bash_completion
 
-const Name = "bash"
-
 var Locals = []string{"$BASH_COMPLETION_DIR"}
 var Globals = []string{"$BASH_COMPLETION_COMPAT_DIR"}
 
