@@ -57,7 +57,7 @@ func (pkg *Pkg) Install(name string, mode os.FileMode, data interface{}, loc Loc
 
 	if !force {
 		if _, err := os.Lstat(fname); !os.IsNotExist(err) {
-			return fname, os.ErrExist
+			return fname, &os.PathError{"create", name, os.ErrExist}
 		}
 	}
 
