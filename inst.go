@@ -3,7 +3,6 @@ package inst
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -37,19 +36,30 @@ func New(t Template, dirs ...string) *Pkg {
 	return &Pkg{Template: t, Locals: dirs}
 }
 
-func (pkg *Pkg) InstallPath(loc Locate, mkdir bool) string {
+func (pkg *Pkg) InstallPath(loc Locate, mkdir bool) (string, error) {
+	paths := pkg.Locals
+
 	switch loc {
 	case Global:
-		return FindDir(pkg.Globals, mkdir)
-	default:
-		return FindDir(pkg.Locals, mkdir)
+		paths = pkg.Globals
 	}
+
+	if len(paths) == 0 {
+		return "", &PathError{Err: ErrNoInstallPath}
+	}
+
+	d := FindDir(paths, mkdir)
+	if d == "" {
+		d = paths[0]
+		return d, &PathError{Path: d, Err: ErrNoInstallPath}
+	}
+
+	return d, nil
 }
 
 func (pkg *Pkg) Install(name string, mode os.FileMode, data interface{}, loc Locate, force bool) (fname string, err error) {
-	d := pkg.InstallPath(loc, true)
-	if d == "" {
-		err = fmt.Errorf("inst: no install path")
+	d, err := pkg.InstallPath(loc, true)
+	if err != nil {
 		return
 	}
 
@@ -115,8 +125,8 @@ func (pkg *Pkg) Create(fname string, mode os.FileMode, data interface{}) (err er
 }
 
 func (pkg *Pkg) Uninstall(name string, loc Locate) (fname string, err error) {
-	d := pkg.InstallPath(loc, false)
-	if d == "" {
+	d, err := pkg.InstallPath(loc, false)
+	if err != nil {
 		return
 	}
 
