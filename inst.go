@@ -162,7 +162,7 @@ func FindDir(dirs []string, mkdir bool) string {
 
 	if mkdir && mkd != "" {
 		err := os.MkdirAll(mkd, 0755)
-		if err == nil {
+		if err == nil || os.IsPermission(err) {
 			return mkd
 		}
 	}
