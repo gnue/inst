@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/gnue/merr"
+	"github.com/gnue/goutils/merr"
 )
 
 type Locate int

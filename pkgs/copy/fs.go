@@ -6,9 +6,9 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/gnue/goutils/merr"
 	"github.com/gnue/httpfs/fsutil"
 	"github.com/gnue/inst"
-	"github.com/gnue/merr"
 )
 
 type FileSystem struct {
