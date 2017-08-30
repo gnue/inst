@@ -1,3 +1,9 @@
+// bash-completion install package
+//
+// * for use "github.com/jessevdk/go-flags" CLI
+// * install path
+//   * $BASH_COMPLETION_DIR (local)
+//   * $BASH_COMPLETION_COMPAT_DIR (global)
 package bash_completion
 
 import (
