@@ -1,3 +1,8 @@
+// launchdaemon install package for macOS
+//
+// * install path
+//   * $HOME/Library/LaunchAgents (local)
+//   * /Library/LaunchDaemons (global)
 package launchdaemon
 
 import (
