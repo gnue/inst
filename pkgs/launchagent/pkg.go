@@ -1,3 +1,8 @@
+// launchagent install package for macOS
+//
+// * install path
+//   * $HOME/Library/LaunchAgents (local)
+//   * /Library/LaunchAgents (global)
 package launchagent
 
 import (

@@ -1,3 +1,6 @@
+// file copy install package
+//
+// * use http.FileSystem interface
 package copy
 
 import (

@@ -1,3 +1,4 @@
+// file install package
 package inst
 
 import (
