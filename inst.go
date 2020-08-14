@@ -188,7 +188,7 @@ func sudo(arg ...string) error {
 	cmd.Stderr = &buf
 	err := cmd.Run()
 	if err != nil {
-		err = errors.New(strings.Trim(buf.String(), "\r\n"))
+		err = errors.New(strings.TrimSpace(buf.String()))
 	}
 
 	return err

@@ -143,7 +143,7 @@ func (d do) launchctl(args ...string) error {
 
 	b, err := cmd.CombinedOutput()
 	if err == nil && 0 < len(b) {
-		err = fmt.Errorf("launchctl: %v", strings.Trim(string(b), "\n\r"))
+		err = fmt.Errorf("launchctl: %v", strings.TrimSpace(string(b)))
 	}
 
 	return err
