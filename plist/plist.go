@@ -4,7 +4,7 @@ import (
 	"io"
 	"regexp"
 
-	"github.com/DHowett/go-plist"
+	"howett.net/plist"
 )
 
 type Template struct {
